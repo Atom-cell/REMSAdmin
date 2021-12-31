@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { AssignedTasks } from "../DB";
-import TaskSeeModal from "./TaskSeeModal";
+import CompletedModal from "./CompletedModal";
 
 const Completed = ({ navigation }) => {
   const [backup, setBackup] = React.useState([]);
@@ -68,7 +68,7 @@ const Completed = ({ navigation }) => {
       </View>
       <View style={{ borderBottomWidth: 1, margin: 5 }}></View>
 
-      {modal ? <TaskSeeModal hideModal={hideModal} obj={obj} /> : null}
+      {modal ? <CompletedModal hideModal={hideModal} obj={obj} /> : null}
 
       <View>
         <FlatList
