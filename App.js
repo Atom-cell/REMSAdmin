@@ -14,6 +14,7 @@ import { MenuProvider } from "react-native-popup-menu";
 import ManageTasksScreen from "./Screens/ManageTasksScreen";
 import AddTaskScreen from "./Screens/AddTaskScreen";
 import EditTaskScreen from "./Screens/EditTaskScreen";
+import Completed from "./Screens/CompletedTaskScreen";
 const CustomDrawer = (props) => {
   return (
     <View style={{ flex: 1 }}>
@@ -105,6 +106,8 @@ export default function App() {
         drawerContent={(props) => <CustomDrawer {...props} />}
       >
         <Drawer.Screen name="Manage Tasks" component={TasksStack} />
+        <Drawer.Screen name="Completed Tasks" component={Completed} />
+
         {/* <Drawer.Screen name="Attendence" component={Attendence} />
         <Drawer.Screen name="Tasks" component={TasksStack} />
         <Drawer.Screen

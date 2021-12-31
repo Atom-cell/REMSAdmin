@@ -7,18 +7,14 @@ import {
   FlatList,
   ActivityIndicator,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AssignedTasks } from "../DB";
-import { Icon } from "react-native-elements";
-
-import { getDrawerStatusFromState } from "@react-navigation/drawer";
 import TaskSeeModal from "./TaskSeeModal";
-import DeleteModal from "./DeleteModal";
 
-const ManageTasksScreen = ({ navigation }) => {
+const Completed = ({ navigation }) => {
+  const [backup, setBackup] = React.useState([]);
   const [tasks, setTasks] = React.useState([]);
+  const [today, setToday] = React.useState([]);
   const [modal, setModal] = React.useState(false);
-  const [modal2, setModal2] = React.useState(false);
   const [obj, setObj] = React.useState({});
   const [id, setID] = React.useState(0); //for deleting
   const [isLoading, setIsLoading] = React.useState(true);
@@ -32,44 +28,47 @@ const ManageTasksScreen = ({ navigation }) => {
     setIsLoading(true);
     let arr = [];
     // getting tasks from DB
-    AssignedTasks.where("Completed", "==", false).onSnapshot(
-      (querySnapshot) => {
-        querySnapshot.forEach((v) => {
-          arr.push({ _id: v.id, ...v.data() });
-          setTasks([...arr]);
-        });
-      }
-    );
+    AssignedTasks.where("Completed", "==", true).onSnapshot((querySnapshot) => {
+      querySnapshot.forEach((v) => {
+        if (v.data().Completed) arr.push({ _id: v.id, ...v.data() });
+        setTasks([...arr]);
+        setBackup([...arr]);
+      });
+    });
     setIsLoading(false);
   };
 
+  const todayTasks = () => {
+    let date = new Date();
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    if (month > 12) month = 1;
+    let year = date.getFullYear();
+    let today = tasks.filter((v) => {
+      v.date === `${year}-${month}-${day}`;
+    });
+    setTasks(today);
+  };
   const hideModal = () => {
     setModal(false);
   };
 
-  const hideModal2 = (m) => {
-    setModal2(false);
-    if (m === "y") {
-      //   AssignedTasks.doc(id).delete();
-    }
-  };
   return (
     <View style={styles.container}>
-      {isLoading ? (
-        <View style={styles.container}>
-          <ActivityIndicator color="orange" size="large" />
-          <Text style={{ alignSelf: "center" }}>Getting data....</Text>
-        </View>
-      ) : null}
-      <TouchableOpacity
-        onPress={() => navigation.navigate("AddTask")}
-        style={styles.addbtn}
-      >
-        <Text style={styles.addtxt}>Add Task</Text>
-      </TouchableOpacity>
+      <View style={styles.btnWrapper}>
+        <TouchableOpacity
+          onPress={() => setTasks(backup)}
+          style={styles.addbtn}
+        >
+          <Text style={styles.addtxt}>All</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => todayTasks()} style={styles.addbtn}>
+          <Text style={styles.addtxt}>Today's Tasks</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={{ borderBottomWidth: 1, margin: 5 }}></View>
 
       {modal ? <TaskSeeModal hideModal={hideModal} obj={obj} /> : null}
-      {modal2 ? <DeleteModal hideModal={hideModal2} /> : null}
 
       <View>
         <FlatList
@@ -96,21 +95,6 @@ const ManageTasksScreen = ({ navigation }) => {
                       | {item.item.dueDate}
                     </Text>
                   </View>
-                  <View>
-                    <TouchableOpacity
-                      onPress={() => {
-                        setModal2(true);
-                        setID(item.item._id);
-                      }}
-                    >
-                      <Icon
-                        name="trash-alt"
-                        type="font-awesome-5"
-                        size={20}
-                        iconStyle={{ marginLeft: 10 }}
-                      />
-                    </TouchableOpacity>
-                  </View>
                 </View>
               </TouchableOpacity>
             );
@@ -122,18 +106,22 @@ const ManageTasksScreen = ({ navigation }) => {
   );
 };
 
-export default ManageTasksScreen;
+export default Completed;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 17,
   },
+  btnWrapper: {
+    flexDirection: "row",
+  },
   addbtn: {
     backgroundColor: "#F4BE2C",
-    width: "100%",
+    // width: "100%",
     padding: 13,
-    marginBottom: 17,
+    marginBottom: 10,
+    marginHorizontal: 13,
   },
   addtxt: {
     fontSize: 17,
