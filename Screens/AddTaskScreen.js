@@ -24,6 +24,7 @@ const AddTaskScreen = ({ navigation }) => {
       date: "",
       empName: eName,
       empID: eID,
+      Total: 0,
     };
     console.log(newObj);
 

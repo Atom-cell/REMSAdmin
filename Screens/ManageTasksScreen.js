@@ -50,7 +50,7 @@ const ManageTasksScreen = ({ navigation }) => {
   const hideModal2 = (m) => {
     setModal2(false);
     if (m === "y") {
-      //   AssignedTasks.doc(id).delete();
+      AssignedTasks.doc(id).delete();
     }
   };
   return (

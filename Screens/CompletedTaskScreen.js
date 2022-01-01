@@ -5,7 +5,6 @@ import {
   View,
   TouchableOpacity,
   FlatList,
-  ActivityIndicator,
 } from "react-native";
 import { AssignedTasks } from "../DB";
 import CompletedModal from "./CompletedModal";
@@ -45,8 +44,9 @@ const Completed = ({ navigation }) => {
     if (month > 12) month = 1;
     let year = date.getFullYear();
     let today = tasks.filter((v) => {
-      v.date === `${year}-${month}-${day}`;
+      return v.date == `${year}-${month}-${day}`;
     });
+
     setTasks(today);
   };
   const hideModal = () => {
@@ -83,16 +83,19 @@ const Completed = ({ navigation }) => {
                   setModal(true);
                   setObj(item.item);
                 }}
-                onLongPress={() =>
-                  navigation.navigate("EditTask", { obj: item.item })
-                }
               >
                 <View style={styles.item}>
                   <View style={styles.itemLeft}>
                     <View style={styles.square}></View>
                     <Text style={styles.text}>{item.item.TaskName}</Text>
-                    <Text style={{ fontSize: 15, marginLeft: 5 }}>
-                      | {item.item.dueDate}
+                    <Text
+                      style={{
+                        fontSize: 15,
+                        marginLeft: 5,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      | ${item.item.Total}
                     </Text>
                   </View>
                 </View>
