@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
+import { Icon } from "react-native-elements";
 import { Emps } from "../DB";
 import { AssignedTasks } from "../DB";
 import { DataTable } from "react-native-paper";
@@ -22,17 +23,14 @@ const EmpsListScreen = ({ navigation }) => {
       headerRight: () => (
         <TouchableOpacity
           style={{
-            padding: 10,
             marginRight: 20,
-            backgroundColor: "white",
-            borderRadius: 30,
           }}
           onPress={() => {
             getEmps();
-            join();
+            // join();
           }}
         >
-          <Text style={{ fontSize: 15, fontWeight: "700" }}>Refresh</Text>
+          <Icon name="redo" type="font-awesome5" />
         </TouchableOpacity>
       ),
     });
@@ -40,7 +38,7 @@ const EmpsListScreen = ({ navigation }) => {
 
   React.useEffect(() => {
     getEmps();
-    join();
+    // join();
   }, []);
 
   const hideModal = () => {
@@ -79,39 +77,39 @@ const EmpsListScreen = ({ navigation }) => {
           <DataTable.Title>EMP. ID</DataTable.Title>
           <DataTable.Title>Name</DataTable.Title>
           <DataTable.Title>Tasks</DataTable.Title>
-          <DataTable.Title numeric>$</DataTable.Title>
+          <DataTable.Title numeric>$Total</DataTable.Title>
           <DataTable.Title numeric>Status</DataTable.Title>
         </DataTable.Header>
 
-        {ewList ? (
-          <FlatList
-            data={ewList}
-            renderItem={(item) => {
-              return (
-                <TouchableOpacity
-                  style={styles.itemsWrapper}
-                  onPress={() => {
-                    setModal(true);
-                    setObj(item.item);
-                  }}
-                >
-                  <DataTable.Row>
-                    <DataTable.Cell>{item.item.empID}</DataTable.Cell>
-                    <DataTable.Cell>{item.item.empName}</DataTable.Cell>
-                    <DataTable.Cell>{item.item.TaskName}</DataTable.Cell>
-                    <DataTable.Cell numeric>{item.item.Total}</DataTable.Cell>
-                    {item.item.Completed ? (
-                      <DataTable.Cell numeric>✔</DataTable.Cell>
-                    ) : (
-                      <DataTable.Cell numeric>❌</DataTable.Cell>
-                    )}
-                  </DataTable.Row>
-                </TouchableOpacity>
-              );
-            }}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        ) : null}
+        {/* {ewList ? ( */}
+        <FlatList
+          data={ewList}
+          renderItem={(item) => {
+            return (
+              <TouchableOpacity
+                style={styles.itemsWrapper}
+                onPress={() => {
+                  setModal(true);
+                  setObj(item.item);
+                }}
+              >
+                <DataTable.Row>
+                  <DataTable.Cell>{item.item.empID}</DataTable.Cell>
+                  <DataTable.Cell>{item.item.empName}</DataTable.Cell>
+                  <DataTable.Cell>{item.item.TaskName}</DataTable.Cell>
+                  <DataTable.Cell numeric>{item.item.Total}</DataTable.Cell>
+                  {item.item.Completed ? (
+                    <DataTable.Cell numeric>✔</DataTable.Cell>
+                  ) : (
+                    <DataTable.Cell numeric>❌</DataTable.Cell>
+                  )}
+                </DataTable.Row>
+              </TouchableOpacity>
+            );
+          }}
+          keyExtractor={(item, index) => index.toString()}
+        />
+        {/* ) : null} */}
       </DataTable>
     </View>
   );

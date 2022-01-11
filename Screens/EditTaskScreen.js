@@ -1,17 +1,21 @@
 import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { Input } from "react-native-elements";
+import { Input, Icon, FAB } from "react-native-elements";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AssignedTasks } from "../DB";
+import DoneModal from "./DoneModal";
 
 const EditTaskScreen = ({ navigation, route }) => {
   const [tName, setTName] = React.useState("");
   const [tDes, setTDes] = React.useState("");
   const [eName, setEName] = React.useState("");
   const [eID, setEID] = React.useState("");
-  const [rate, setRate] = React.useState();
+  const [rate, setRate] = React.useState(0);
   const [date, setDate] = React.useState("");
   const [obj, setObj] = React.useState({});
+  const [modal, setModal] = React.useState(false);
+
+  const [tasks, setTasks] = React.useState([]);
 
   React.useEffect(() => {
     const { obj } = route.params;
@@ -19,8 +23,22 @@ const EditTaskScreen = ({ navigation, route }) => {
     editTask();
   }, []);
 
+  const getDataDB = () => {
+    let arr = [];
+    // getting tasks from DB
+    AssignedTasks.onSnapshot((querySnapshot) => {
+      querySnapshot.forEach((v) => {
+        arr.push({ _id: v.id, ...v.data() });
+        setTasks([...arr]);
+      });
+    });
+  };
+
+  const hideModal = () => {
+    setModal(false);
+    navigation.navigate("ManageTasks");
+  };
   const editTask = () => {
-    ///
     setTName(obj.TaskName);
     setTDes(obj.TaskDescp);
     setEName(obj.empName);
@@ -29,15 +47,32 @@ const EditTaskScreen = ({ navigation, route }) => {
     setDate(obj.dueDate);
   };
   const saveEdit = () => {
-    AssignedTasks.doc(obj._id).update({ TaskName: tName });
-    AssignedTasks.doc(obj._id).update({ TaskDescp: tDes });
-    AssignedTasks.doc(obj._id).update({ empName: eName });
-    AssignedTasks.doc(obj._id).update({ empID: eID });
-    AssignedTasks.doc(obj._id).update({ Rate: rate });
-    AssignedTasks.doc(obj._id).update({ dueDate: date });
+    if (
+      tName !== undefined &&
+      tDes !== undefined &&
+      eName !== undefined &&
+      eID !== undefined &&
+      rate !== undefined &&
+      date !== undefined
+    ) {
+      AssignedTasks.doc(obj._id).update({
+        TaskName: tName,
+        TaskDescp: tDes,
+        empName: eName,
+        empID: eID,
+        Rate: rate,
+        dueDate: date,
+      });
+
+      // getDataDB();
+      // if (tasks)
+      setModal(true);
+    }
   };
   return (
     <View style={styles.container}>
+      {modal ? <DoneModal hideModal={hideModal} msg="Task Edited" /> : null}
+
       <Input
         placeholder="Task Name"
         label="Task Name"
@@ -60,11 +95,13 @@ const EditTaskScreen = ({ navigation, route }) => {
         placeholder="Employee ID"
         label="Employee ID"
         value={eID}
+        keyboardType="numeric"
         onChangeText={(v) => setEID(v)}
       />
       <Input
         placeholder="$ Rate"
         label="$ Rate"
+        keyboardType="numeric"
         value={rate}
         onChangeText={(v) => setRate(v)}
       />
@@ -72,20 +109,29 @@ const EditTaskScreen = ({ navigation, route }) => {
         placeholder="Due Date"
         label="YYYY-MM-DD"
         value={date}
+        keyboardType="numeric"
         onChangeText={(v) => setDate(v)}
       />
       <TouchableOpacity
         onPress={() => {
           saveEdit();
-          navigation.navigate("ManageTasks");
         }}
         style={styles.addbtn}
       >
         <Text style={styles.addtxt}>Edit Task</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.addbtn} onPress={() => editTask()}>
+      {/* <TouchableOpacity style={styles.addbtn} onPress={() => editTask()}>
         <Text style={styles.addtxt}>Refresh</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
+
+      <FAB
+        style={styles.fab}
+        visible={true}
+        icon={{ name: "redo", color: "black" }}
+        size="large"
+        color="#F4BE2C"
+        onPress={() => editTask()}
+      />
     </View>
   );
 };
@@ -108,5 +154,11 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: "bold",
     alignSelf: "center",
+  },
+
+  fab: {
+    position: "absolute",
+    bottom: 40,
+    right: 20,
   },
 });

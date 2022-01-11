@@ -7,11 +7,8 @@ import {
   FlatList,
   ActivityIndicator,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AssignedTasks } from "../DB";
 import { Icon } from "react-native-elements";
-
-import { getDrawerStatusFromState } from "@react-navigation/drawer";
 import TaskSeeModal from "./TaskSeeModal";
 import DeleteModal from "./DeleteModal";
 
@@ -29,7 +26,7 @@ const ManageTasksScreen = ({ navigation }) => {
   }, []);
 
   const getDataDB = () => {
-    setIsLoading(true);
+    setTasks([]);
     let arr = [];
     // getting tasks from DB
     AssignedTasks.where("Completed", "==", false).onSnapshot(
@@ -51,6 +48,7 @@ const ManageTasksScreen = ({ navigation }) => {
     setModal2(false);
     if (m === "y") {
       AssignedTasks.doc(id).delete();
+      getDataDB();
     }
   };
   return (

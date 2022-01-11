@@ -19,9 +19,15 @@ export default function CompletedModal({ hideModal, obj }) {
             <Text style={styles.txt}>{obj.empName}</Text>
           </View>
           <View style={{ flexDirection: "row" }}>
-            <Text style={styles.txt}>${obj.Rate}/h</Text>
+            <View>
+              <Text>Rate</Text>
+              <Text style={styles.txt}>${obj.Rate}/h</Text>
+            </View>
             <View style={{ marginHorizontal: 10 }}></View>
-            <Text style={styles.txt}>{obj.date}</Text>
+            <View>
+              <Text>Completed</Text>
+              <Text style={styles.txt}>{obj.date}</Text>
+            </View>
           </View>
           <View style={{ flexDirection: "row" }}>
             <View>
